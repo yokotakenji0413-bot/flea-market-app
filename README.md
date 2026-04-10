@@ -1,58 +1,277 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FLEA MARKET APP（フリマアプリ）
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## アプリケーション概要
 
-## About Laravel
+ユーザーが商品を出品・購入できるフリマアプリケーションです。
+商品の一覧表示、詳細確認、出品、購入機能を実装しています。
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 作成した目的
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+COACHTECH確認テスト課題として、LaravelのMVC構造を理解し、
+実践的なECサイトに近いアプリケーションを構築するため。
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## アプリケーション機能
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+* 認証機能（ユーザー登録 / ログイン / ログアウト）
+* 商品一覧表示
+* 商品詳細表示
+* 商品出品
+* 商品編集
+* 商品削除
+* 商品購入機能
+* マイページ機能
+* 画像アップロード
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## 使用技術（実行環境）
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+| 技術      | バージョン |
+| ------- | ----- |
+| PHP     | 8.x   |
+| Laravel | 10.x  |
+| MySQL   | 8.0   |
+| nginx   | 1.21  |
+| Docker  | 最新    |
 
-```bash
-composer require laravel/boost --dev
+---
 
-php artisan boost:install
+## ER図
+
+```
+(users) 1 --- N (products)
+(users) 1 --- N (purchases)
+(products) 1 --- 1 (purchases)
+
++----------------+
+| users          |
++----------------+
+| id             |
+| name           |
+| email          |
+| password       |
+| created_at     |
+| updated_at     |
++----------------+
+
+    │ 1
+    │
+    │ N
++----------------+
+| products       |
++----------------+
+| id             |
+| user_id        |
+| name           |
+| price          |
+| description    |
+| image          |
+| created_at     |
+| updated_at     |
++----------------+
+
+    │ 1
+    │
+    │ 1
++----------------+
+| purchases      |
++----------------+
+| id             |
+| user_id        |
+| product_id     |
+| created_at     |
+| updated_at     |
++----------------+
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## テーブル構造
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### users
 
-## Code of Conduct
+| カラム        | 型         |
+| ---------- | --------- |
+| id         | bigint    |
+| name       | varchar   |
+| email      | varchar   |
+| password   | varchar   |
+| created_at | timestamp |
+| updated_at | timestamp |
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+### products
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+| カラム         | 型         |
+| ----------- | --------- |
+| id          | bigint    |
+| user_id     | bigint    |
+| name        | varchar   |
+| price       | integer   |
+| description | text      |
+| image       | varchar   |
+| created_at  | timestamp |
+| updated_at  | timestamp |
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### purchases
+
+| カラム        | 型         |
+| ---------- | --------- |
+| id         | bigint    |
+| user_id    | bigint    |
+| product_id | bigint    |
+| created_at | timestamp |
+| updated_at | timestamp |
+
+---
+
+## URL設計
+
+| URL                 | 機能                     |
+| ------------------- | ---------------------- |
+| /                   | 商品一覧（GET）              |
+| /register           | ユーザー登録                 |
+| /login              | ログイン                   |
+| /products/{id}      | 商品詳細（GET）              |
+| /products/create    | 商品出品                   |
+| /products/{id}/edit | 商品編集                   |
+| /products           | 商品一覧（GET） / 商品登録（POST） |
+| /purchase/{id}      | 商品購入（POST）             |
+| /mypage             | マイページ                  |
+
+---
+
+## コントローラ設計
+
+* ProductController：商品管理機能
+* PurchaseController：購入処理
+* Auth：認証機能
+
+---
+
+## 環境構築
+
+### リポジトリをクローン
+
+```
+git clone https://github.com/yokotakenji0413-bot/flea-market-app.git
+```
+
+### ディレクトリ移動
+
+```
+cd flea-market-app
+```
+
+### Dockerコンテナ作成
+
+```
+docker-compose up -d --build
+```
+
+---
+
+## Laravel環境構築
+
+### PHPコンテナへ入る
+
+```
+docker-compose exec app bash
+```
+
+### Composerインストール
+
+```
+composer install
+```
+
+### .envファイル作成
+
+```
+cp .env.example .env
+```
+
+### アプリケーションキー作成
+
+```
+php artisan key:generate
+```
+
+### マイグレーション実行
+
+```
+php artisan migrate
+```
+
+### ストレージリンク作成
+
+```
+php artisan storage:link
+```
+
+---
+
+## フォルダ構成
+
+```
+flea-market-app
+│
+├ docker
+├ docker-compose.yml
+├ README.md
+│
+└ src
+   │
+   ├ app
+   │   ├ Http
+   │   │   └ Controllers
+   │   │
+   │   └ Models
+   │
+   ├ database
+   │   └ migrations
+   │
+   ├ public
+   │
+   ├ resources
+   │   └ views
+   │
+   └ routes
+```
+
+---
+
+## 工夫した点
+
+* フリマアプリとして実用的な機能を実装
+* 画像アップロードによる商品管理
+* ユーザーごとの出品・購入管理
+
+---
+
+## 今後の課題
+
+* 決済機能の実装
+* お気に入り機能の追加
+* コメント機能の追加
+* 検索・フィルタ機能の強化
+
+---
+
+## 補足
+
+* 画像は public/images ディレクトリに保存
+* 画像パスは /images/ で参照
+
+---
+
+## 作成者
+
+横田 憲治
