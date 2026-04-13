@@ -171,55 +171,85 @@ cd flea-market-app
 ```
 
 ### Dockerコンテナ作成
-
 ```
 docker-compose up -d --build
 ```
-
 ---
 
 ## Laravel環境構築
 
 ### PHPコンテナへ入る
-
 ```
-docker-compose exec app bash
+docker-compose exec php bash
 ```
-
 ### Composerインストール
-
 ```
 composer install
 ```
+※コンテナ内でcomposerが使用できない場合
+```
+docker-compose exec php composer install
+```
+---
 
 ### .envファイル作成
-
 ```
 cp .env.example .env
 ```
+---
+
+### DB設定（.env）
+
+以下のように設定してください
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=laravel
+DB_USERNAME=user
+DB_PASSWORD=password
+```
+※DB_HOSTは docker-compose.yml のサービス名（mysql）を指定
+
+---
 
 ### アプリケーションキー作成
-
 ```
 php artisan key:generate
 ```
+---
 
 ### マイグレーション実行
-
 ```
 php artisan migrate
 ```
+---
 
 ### ストレージリンク作成
-
 ```
 php artisan storage:link
 ```
+---
+
+## コンテナ確認
+```
+docker-compose ps
+```
+---
+
+## アクセス
+
+<http://localhost:8080>
+
+---
+
+## phpMyAdmin
+
+<http://localhost:8081>
 
 ---
 
 ## フォルダ構成
-
 ```
 flea-market-app
 │
