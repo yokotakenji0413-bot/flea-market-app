@@ -182,14 +182,17 @@ docker-compose up -d --build
 ```
 docker-compose exec php bash
 ```
+
 ### Composerインストール
+
 ```
+docker-compose exec php bash
+cd /var/www
 composer install
 ```
-※コンテナ内でcomposerが使用できない場合
-```
-docker-compose exec php composer install
-```
+
+※Laravelプロジェクトは /var/www に配置されています
+
 ---
 
 ### .envファイル作成
@@ -257,23 +260,11 @@ flea-market-app
 ├ docker-compose.yml
 ├ README.md
 │
-└ src
-   │
-   ├ app
-   │   ├ Http
-   │   │   └ Controllers
-   │   │
-   │   └ Models
-   │
-   ├ database
-   │   └ migrations
-   │
-   ├ public
-   │
-   ├ resources
-   │   └ views
-   │
-   └ routes
+├ app
+├ database
+├ public
+├ resources
+└ routes
 ```
 
 ---
@@ -299,6 +290,8 @@ flea-market-app
 
 * 画像は public/images ディレクトリに保存
 * 画像パスは /images/ で参照
+* Laravelは /var/www に配置されています
+* コマンドはphpコンテナ内で実行してください
 
 ---
 
