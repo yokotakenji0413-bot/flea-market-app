@@ -1,5 +1,11 @@
 FROM php:8.4-fpm
 
-RUN docker-php-ext-install pdo_mysql
+# 必要パッケージ
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    libzip-dev \
+    && docker-php-ext-install pdo_mysql zip
 
-WORKDIR /var/www
+# 👇ここに追加（これが重要）
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
