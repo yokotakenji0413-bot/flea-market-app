@@ -9,289 +9,120 @@
 
 ## 作成した目的
 
-COACHTECH確認テスト課題として、LaravelのMVC構造を理解し、
-実践的なECサイトに近いアプリケーションを構築するため。
+COACHTECHの模擬案件を通じて、Laravelを用いたCRUD処理およびデータベース設計の理解を深めるために作成しました。
 
 ---
 
-## アプリケーション機能
+## 機能一覧
 
-* 認証機能（ユーザー登録 / ログイン / ログアウト）
+* ユーザー登録・ログイン機能
 * 商品一覧表示
 * 商品詳細表示
-* 商品出品
-* 商品編集
-* 商品削除
+* 商品出品機能
 * 商品購入機能
-* マイページ機能
-* 画像アップロード
+* マイリスト表示機能
 
 ---
 
-## 使用技術（実行環境）
+## 使用技術
 
-| 技術      | バージョン |
-|----------|------------|
-| PHP      | 8.4以上     |
-| Laravel  | 13.x       |
-| MySQL    | 8.0        |
-| nginx    | 1.21       |
-| Docker   | 最新        |
+* PHP（Laravel 10）
+* MySQL 8.0
+* HTML / CSS
+* Docker / Docker Compose
 
 ---
 
 ## ER図
 
-```
-(users) 1 --- N (products)
-(users) 1 --- N (purchases)
-(products) 1 --- 1 (purchases)
+本アプリケーションのデータベース構造を以下に示します。
 
-+----------------+
-| users          |
-+----------------+
-| id             |
-| name           |
-| email          |
-| password       |
-| created_at     |
-| updated_at     |
-+----------------+
-
-    │ 1
-    │
-    │ N
-+----------------+
-| products       |
-+----------------+
-| id             |
-| user_id        |
-| name           |
-| price          |
-| description    |
-| image          |
-| created_at     |
-| updated_at     |
-+----------------+
-
-    │ 1
-    │
-    │ 1
-+----------------+
-| purchases      |
-+----------------+
-| id             |
-| user_id        |
-| product_id     |
-| created_at     |
-| updated_at     |
-+----------------+
-```
+![ER図](./er_diagram_pro_visual.png)
 
 ---
 
-## テーブル構造
+## テーブル設計
 
 ### users
 
-| カラム        | 型         |
-| ---------- | --------- |
-| id         | bigint    |
-| name       | varchar   |
-| email      | varchar   |
-| password   | varchar   |
-| created_at | timestamp |
-| updated_at | timestamp |
+| カラム名  | 型      | 説明      |
+| ----- | ------ | ------- |
+| id    | PK     | ユーザーID  |
+| name  | string | ユーザー名   |
+| email | string | メールアドレス |
 
 ---
 
 ### products
 
-| カラム         | 型         |
-| ----------- | --------- |
-| id          | bigint    |
-| user_id     | bigint    |
-| name        | varchar   |
-| price       | integer   |
-| description | text      |
-| image       | varchar   |
-| created_at  | timestamp |
-| updated_at  | timestamp |
+| カラム名    | 型      | 説明   |
+| ------- | ------ | ---- |
+| id      | PK     | 商品ID |
+| user_id | FK     | 出品者  |
+| name    | string | 商品名  |
+
+---
+
+### addresses
+
+| カラム名    | 型  | 説明   |
+| ------- | -- | ---- |
+| id      | PK | 住所ID |
+| user_id | FK | ユーザー |
 
 ---
 
 ### purchases
 
-| カラム        | 型         |
-| ---------- | --------- |
-| id         | bigint    |
-| user_id    | bigint    |
-| product_id | bigint    |
-| created_at | timestamp |
-| updated_at | timestamp |
+| カラム名       | 型  | 説明   |
+| ---------- | -- | ---- |
+| id         | PK | 購入ID |
+| user_id    | FK | 購入者  |
+| product_id | FK | 商品   |
+| address_id | FK | 配送先  |
 
 ---
 
-## URL設計
+### categories
 
-| URL                 | 機能                     |
-| ------------------- | ---------------------- |
-| /                   | 商品一覧（GET）              |
-| /register           | ユーザー登録                 |
-| /login              | ログイン                   |
-| /products/{id}      | 商品詳細（GET）              |
-| /products/create    | 商品出品                   |
-| /products/{id}/edit | 商品編集                   |
-| /products           | 商品一覧（GET） / 商品登録（POST） |
-| /purchase/{id}      | 商品購入（POST）             |
-| /mypage             | マイページ                  |
+| カラム名 | 型      | 説明     |
+| ---- | ------ | ------ |
+| id   | PK     | カテゴリID |
+| name | string | カテゴリ名  |
 
 ---
 
-## コントローラ設計
+### category_product
 
-* ProductController：商品管理機能
-* PurchaseController：購入処理
-* Auth：認証機能
+| カラム名        | 型  | 説明   |
+| ----------- | -- | ---- |
+| category_id | FK | カテゴリ |
+| product_id  | FK | 商品   |
 
 ---
 
 ## 環境構築
 
-### リポジトリをクローン
-
 ```
 git clone https://github.com/yokotakenji0413-bot/flea-market-app.git
-```
-
-### ディレクトリ移動
-
-```
 cd flea-market-app
-```
-
-### Dockerコンテナ作成
-```
 docker-compose up -d --build
 ```
----
-
-## Laravel環境構築
-
-### PHPコンテナへ入る
-```
-docker-compose exec php bash
-```
-
-### Composerインストール
-
-```
-docker-compose exec php bash
-cd /var/www
-composer install
-```
-
-※Laravelプロジェクトは /var/www に配置されています
 
 ---
 
-### .envファイル作成
-```
-cp .env.example .env
-```
----
+## URL
 
-### DB設定（.env）
-
-以下のように設定してください
-```
-DB_CONNECTION=mysql
-DB_HOST=mysql
-DB_PORT=3306
-DB_DATABASE=laravel
-DB_USERNAME=user
-DB_PASSWORD=password
-```
-※DB_HOSTは docker-compose.yml のサービス名（mysql）を指定
+* 開発環境: <http://localhost>
+* phpMyAdmin: <http://localhost:8080>
 
 ---
 
-### アプリケーションキー作成
-```
-php artisan key:generate
-```
----
+## 今後の改善点
 
-### マイグレーション実行
-```
-php artisan migrate
-```
----
-
-### ストレージリンク作成
-```
-php artisan storage:link
-```
----
-
-## コンテナ確認
-```
-docker-compose ps
-```
----
-
-## アクセス
-
-<http://localhost:8080>
-
----
-
-## phpMyAdmin
-
-<http://localhost:8081>
-
----
-
-## フォルダ構成
-```
-flea-market-app
-│
-├ docker
-├ docker-compose.yml
-├ README.md
-│
-├ app
-├ database
-├ public
-├ resources
-└ routes
-```
-
----
-
-## 工夫した点
-
-* フリマアプリとして実用的な機能を実装
-* 画像アップロードによる商品管理
-* ユーザーごとの出品・購入管理
-
----
-
-## 今後の課題
-
-* 決済機能の実装
-* お気に入り機能の追加
-* コメント機能の追加
-* 検索・フィルタ機能の強化
-
----
-
-## 補足
-
-* 画像は public/images ディレクトリに保存
-* 画像パスは /images/ で参照
-* Laravelは /var/www に配置されています
-* コマンドはphpコンテナ内で実行してください
+* バリデーション強化
+* UI/UXの改善
+* 決済機能の追加
 
 ---
 
