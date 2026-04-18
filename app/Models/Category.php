@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Item;
 
 class Category extends Model
 {
@@ -12,8 +11,8 @@ class Category extends Model
     ];
 
     // 商品（多対多）
-    public function items()
+    public function products()
     {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsToMany(Product::class);
     }
 }

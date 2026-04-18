@@ -14,15 +14,11 @@ return new class extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
 
-            // 外部キー
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // 購入者
-            $table->foreignId('item_id')->constrained()->onDelete('cascade'); // 商品
-            $table->foreignId('address_id')->constrained()->onDelete('cascade'); // 配送先
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('product_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('address_id')->constrained();
 
             $table->timestamps();
-
-            // 1商品1回しか購入できない（超重要🔥）
-            $table->unique('item_id');
         });
     }
 

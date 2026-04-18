@@ -37,7 +37,7 @@ COACHTECHの模擬案件を通じて、Laravelを用いたCRUD処理およびデ
 
 本アプリケーションのデータベース構造を以下に示します。
 
-![ER図](./er_diagram_pro_visual.png)
+![ER図](./er_diagram_pro_visual-1.png)
 
 ---
 
